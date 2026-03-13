@@ -69,7 +69,7 @@
 
 @layer utilities {
   .font-heading {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Times New Roman', 'Georgia', serif;
   }
   .font-body {
     font-family: 'DM Sans', sans-serif;
