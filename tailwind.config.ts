@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ["Syne", "sans-serif"],
+        heading: ["Times New Roman", "Georgia", "serif"],
         body: ["DM Sans", "sans-serif"],
       },
       colors: {
