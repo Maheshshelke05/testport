@@ -2,34 +2,80 @@
 set -e
 
 echo "======================================"
-echo "  Step 1: Install docker-compose"
+echo "  Step 1: Update Docker + buildx"
 echo "======================================"
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-docker-compose --version
-
-echo "======================================"
-echo "  Step 2: Start Docker daemon"
-echo "======================================"
+sudo yum update -y
+sudo yum install -y docker
 sudo systemctl start docker
 sudo systemctl enable docker
-sudo usermod -aG docker ec2-user
+
+# Update buildx
+mkdir -p ~/.docker/cli-plugins
+curl -sSL https://github.com/docker/buildx/releases/latest/download/buildx-$(uname -s)-$(uname -m | sed 's/x86_64/amd64/') -o ~/.docker/cli-plugins/docker-buildx 2>/dev/null || \
+curl -sSL "https://github.com/docker/buildx/releases/download/v0.17.0/buildx-v0.17.0.linux-amd64" -o ~/.docker/cli-plugins/docker-buildx
+chmod +x ~/.docker/cli-plugins/docker-buildx
 
 echo "======================================"
-echo "  Step 3: Create .env"
+echo "  Step 2: Create Docker network"
 echo "======================================"
-cat > .env << 'EOF'
-GMAIL_USER=shivam.garud2011@gmail.com
-GMAIL_APP_PASSWORD=tqpsbkrqnfoojopu
-ADMIN_EMAIL=shivam.garud2011@gmail.com
-WHATSAPP_LINK=https://wa.me/917709646107
-PORT=3001
-EOF
+sudo docker network create app_network 2>/dev/null || true
 
 echo "======================================"
-echo "  Step 4: Build and start containers"
+echo "  Step 3: Create volumes"
 echo "======================================"
-sudo docker-compose up -d --build
+sudo docker volume create admin_uploads 2>/dev/null || true
+sudo docker volume create admin_data 2>/dev/null || true
+
+echo "======================================"
+echo "  Step 4: Build Admin image"
+echo "======================================"
+sudo docker build -t cloudbuild_admin ./admin
+
+echo "======================================"
+echo "  Step 5: Build Frontend image"
+echo "======================================"
+sudo docker build -t cloudbuild_frontend .
+
+echo "======================================"
+echo "  Step 6: Stop old containers"
+echo "======================================"
+sudo docker stop cloudbuild_admin cloudbuild_frontend cloudbuild_nginx 2>/dev/null || true
+sudo docker rm cloudbuild_admin cloudbuild_frontend cloudbuild_nginx 2>/dev/null || true
+
+echo "======================================"
+echo "  Step 7: Start Admin"
+echo "======================================"
+sudo docker run -d \
+  --name cloudbuild_admin \
+  --network app_network \
+  --restart unless-stopped \
+  --env-file .env \
+  -v admin_uploads:/app/public/uploads \
+  -v admin_data:/app/data \
+  cloudbuild_admin
+
+echo "======================================"
+echo "  Step 8: Start Frontend"
+echo "======================================"
+sudo docker run -d \
+  --name cloudbuild_frontend \
+  --network app_network \
+  --restart unless-stopped \
+  cloudbuild_frontend
+
+echo "======================================"
+echo "  Step 9: Start Nginx"
+echo "======================================"
+sudo docker run -d \
+  --name cloudbuild_nginx \
+  --network app_network \
+  --restart unless-stopped \
+  -p 80:80 \
+  -p 443:443 \
+  -v $(pwd)/nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro \
+  -v certbot_www:/var/www/certbot \
+  -v certbot_certs:/etc/letsencrypt \
+  nginx:alpine
 
 echo ""
 echo "======================================"
