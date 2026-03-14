@@ -23,13 +23,16 @@ export default function ServicesSection() {
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {services.map((s) => (
+          {services.map((s, i) => (
             <div
               key={s.title}
-              className="fade-up p-6 rounded-lg border border-border bg-background card-hover"
-              style={{ boxShadow: "var(--shadow-card)" }}
+              className="fade-up service-card p-6 rounded-lg border border-border bg-background"
+              style={{ 
+                boxShadow: "var(--shadow-card)",
+                transitionDelay: `${i * 0.08}s`
+              }}
             >
-              <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-2xl mb-4">
+              <div className="service-icon w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-2xl mb-4">
                 {s.icon}
               </div>
               <h3 className="font-heading font-bold text-lg mb-2">{s.title}</h3>

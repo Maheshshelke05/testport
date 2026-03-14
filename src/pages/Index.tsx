@@ -2,11 +2,10 @@ import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import MarqueeSection from "@/components/MarqueeSection";
-import ServicesSection from "@/components/ServicesSection";
 import ProjectsSection from "@/components/ProjectsSection";
+import ServicesSection from "@/components/ServicesSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
-import VideosSection from "@/components/VideosSection";
-import ProcessSection from "@/components/ProcessSection";
+import CalligraphicSection from "@/components/CalligraphicSection";
 import FaqSection from "@/components/FaqSection";
 import BlogSection from "@/components/BlogSection";
 import ContactSection from "@/components/ContactSection";
@@ -34,11 +33,10 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <MarqueeSection />
-      <ServicesSection />
       <ProjectsSection />
+      <ServicesSection />
       <TestimonialsSection />
-      <VideosSection />
-      <ProcessSection />
+      <CalligraphicSection />
       <FaqSection />
       <BlogSection />
       <ContactSection />
