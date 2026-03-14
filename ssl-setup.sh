@@ -1,17 +1,15 @@
 #!/bin/bash
-# ============================================
-# SSL Setup — Run AFTER server-setup.sh
-# ============================================
+set -e
 
 DOMAIN="cloudbuild.tech"
 EMAIL="shivam.garud2011@gmail.com"
 
 echo "======================================"
-echo "  Step 1: Start HTTP only (for certbot)"
+echo "  Step 1: Start HTTP nginx for certbot"
 echo "======================================"
 
-# Temp nginx config — HTTP only for certbot challenge
-cat > nginx-proxy.conf << 'EOF'
+# Temp HTTP-only nginx config
+cat > /tmp/nginx-http-only.conf << 'EOF'
 server {
     listen 80;
     server_name cloudbuild.tech www.cloudbuild.tech admin.cloudbuild.tech;
@@ -21,23 +19,25 @@ server {
     }
 
     location / {
-        return 200 'OK';
+        return 200 'waiting for ssl';
         add_header Content-Type text/plain;
     }
 }
 EOF
 
-# Start only nginx for certbot challenge
-docker compose up -d nginx
+# Backup real config, use temp
+cp nginx-proxy.conf nginx-proxy.conf.bak
+cp /tmp/nginx-http-only.conf nginx-proxy.conf
 
-echo "Waiting for nginx..."
+# Start nginx only
+sudo docker-compose up -d nginx
 sleep 5
 
 echo "======================================"
 echo "  Step 2: Get SSL Certificate"
 echo "======================================"
 
-docker compose run --rm certbot certonly \
+sudo docker-compose run --rm certbot certonly \
   --webroot \
   --webroot-path=/var/www/certbot \
   --email $EMAIL \
@@ -48,21 +48,14 @@ docker compose run --rm certbot certonly \
   -d admin.$DOMAIN
 
 echo "======================================"
-echo "  Step 3: Restore full nginx config"
+echo "  Step 3: Restore nginx config + start all"
 echo "======================================"
 
-# Restore the real nginx config with SSL
-cp nginx-proxy.conf.bak nginx-proxy.conf 2>/dev/null || true
-
-echo "======================================"
-echo "  Step 4: Start all containers"
-echo "======================================"
-
-docker compose up -d --build
+cp nginx-proxy.conf.bak nginx-proxy.conf
+sudo docker-compose up -d --build
 
 echo ""
 echo "======================================"
-echo "  DONE! Your site is live at:"
-echo "  https://cloudbuild.tech"
-echo "  https://admin.cloudbuild.tech"
+echo "  LIVE at https://cloudbuild.tech"
+echo "  Admin: https://admin.cloudbuild.tech"
 echo "======================================"
