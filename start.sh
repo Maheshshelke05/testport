@@ -14,7 +14,13 @@ echo ""
 # ── Step 1: Install Docker if not present ──
 if ! command -v docker &>/dev/null; then
   echo "▶ Installing Docker..."
-  curl -fsSL https://get.docker.com | sh
+  if [ -f /etc/system-release ] && grep -qi 'amazon linux' /etc/system-release; then
+    sudo yum install -y docker
+    sudo systemctl start docker
+    sudo systemctl enable docker
+  else
+    curl -fsSL https://get.docker.com | sh
+  fi
   sudo usermod -aG docker $USER
   echo "✅ Docker installed"
 else
