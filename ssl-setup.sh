@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-DOMAIN="cloudbuild.tech"
-EMAIL="shivam.garud2011@gmail.com"
+DOMAIN="maheshbhau.xyz"
+EMAIL="your@email.com"
 
 echo "======================================"
 echo "  Step 1: Start HTTP nginx for certbot"
@@ -12,7 +12,7 @@ echo "======================================"
 cat > /tmp/nginx-http-only.conf << 'EOF'
 server {
     listen 80;
-    server_name cloudbuild.tech www.cloudbuild.tech admin.cloudbuild.tech;
+    server_name maheshbhau.xyz www.maheshbhau.xyz admin.maheshbhau.xyz;
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -56,6 +56,6 @@ sudo docker-compose up -d --build
 
 echo ""
 echo "======================================"
-echo "  LIVE at https://cloudbuild.tech"
-echo "  Admin: https://admin.cloudbuild.tech"
+echo "  LIVE at https://maheshbhau.xyz"
+echo "  Admin: https://admin.maheshbhau.xyz"
 echo "======================================"

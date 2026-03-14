@@ -1,15 +1,15 @@
 #!/bin/bash
 set -e
 
-DOMAIN="cloudbuild.tech"
-EMAIL="shivam.garud2011@gmail.com"
-DIR="/home/ec2-user/digital-launchpad"
+DOMAIN="maheshbhau.xyz"
+EMAIL="your@email.com"
+DIR="/home/ubuntu/digital-launchpad"
 
 cd $DIR
 
 echo ""
 echo "╔══════════════════════════════════════╗"
-echo "║     CloudBuild Deploy Script         ║"
+echo "║     maheshbhau.xyz Deploy Script     ║"
 echo "╚══════════════════════════════════════╝"
 echo ""
 
@@ -163,7 +163,7 @@ if [ -f "$CERT_PATH" ]; then
   echo "  🌐  https://$DOMAIN"
   echo "  🔧  https://admin.$DOMAIN"
 else
-  echo "  🌐  http://16.171.150.213  (HTTP only)"
+  echo "  🌐  http://$(curl -s ifconfig.me)  (HTTP only — SSL pending)"
   echo "  Run ./deploy.sh again after SSL setup"
 fi
 echo ""
