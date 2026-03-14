@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const app = express();
-const PORT = 8081;
+const PORT = process.env.PORT || 3001;
 
 // Email transporter configuration
 const transporter = nodemailer.createTransport({
@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:5173'],
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']

@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 
+const IMG_BASE = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+  ? ''
+  : 'http://localhost:8081';
+
 export default function ProjectsSection() {
   const [projects, setProjects] = useState([]);
   const [showAll, setShowAll] = useState(false);
@@ -57,7 +61,7 @@ export default function ProjectsSection() {
                   }}
                 >
                   <div className="relative overflow-hidden">
-                    <img src={p.coverImage} alt={p.name} className="cover-image w-full h-48 object-cover" />
+                    <img src={p.coverImage?.startsWith('/uploads') ? `${IMG_BASE}${p.coverImage}` : p.coverImage} alt={p.name} className="cover-image w-full h-48 object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                       <h3 className="font-heading font-bold text-lg text-white">{p.name}</h3>
                     </div>

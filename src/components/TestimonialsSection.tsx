@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 
-const IMG_BASE = "http://localhost:8081";
+const IMG_BASE = typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
+  ? '' 
+  : 'http://localhost:8081';
 
 export default function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState([]);
